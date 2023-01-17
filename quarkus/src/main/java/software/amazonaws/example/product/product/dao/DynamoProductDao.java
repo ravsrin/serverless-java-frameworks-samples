@@ -4,6 +4,7 @@
 package software.amazonaws.example.product.product.dao;
 
 import com.amazonaws.xray.interceptors.TracingInterceptor;
+//import io.quarkus.runtime.Startup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
@@ -22,23 +23,28 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+//@Startup
 @ApplicationScoped
 public class DynamoProductDao implements ProductDao {
   private static final Logger logger = LoggerFactory.getLogger(DynamoProductDao.class);
 
-  //This field is intentionally not static final. The native image version of the code
-  //does not work if this is set to static final
+  // This field is intentionally not static final.
+  // The native image version of the code does not work if this is set to static final.
   //TODO: Investigate and fix the issue with native image
-  private String PRODUCT_TABLE_NAME = System.getenv("PRODUCT_TABLE_NAME");
+  private final String PRODUCT_TABLE_NAME = System.getenv("PRODUCT_TABLE_NAME");
 
-  private final DynamoDbClient dynamoDbClient = DynamoDbClient.builder()
-    .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
-    .region(Region.of(System.getenv(SdkSystemSetting.AWS_REGION.environmentVariable())))
-    .httpClient(UrlConnectionHttpClient.builder().build())
-    .overrideConfiguration(ClientOverrideConfiguration.builder()
-      .addExecutionInterceptor(new TracingInterceptor())
-      .build())
-    .build();
+  private static final DynamoDbClient dynamoDbClient;
+
+  static {
+    dynamoDbClient = DynamoDbClient.builder()
+      .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
+      .region(Region.of(System.getenv(SdkSystemSetting.AWS_REGION.environmentVariable())))
+      .httpClient(UrlConnectionHttpClient.builder().build())
+      .overrideConfiguration(ClientOverrideConfiguration.builder()
+        .addExecutionInterceptor(new TracingInterceptor())
+        .build())
+      .build();
+  }
 
   @Override
   public Optional<Product> getProduct(String id) {

@@ -13,10 +13,10 @@
     <maven.compiler.source>11</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <quarkus-plugin.version>2.6.3.Final</quarkus-plugin.version>
+    <quarkus-plugin.version>2.15.3.Final</quarkus-plugin.version>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
-    <quarkus.platform.version>2.6.3.Final</quarkus.platform.version>
+    <quarkus.platform.version>2.15.3.Final</quarkus.platform.version>
     <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
     <quarkus.package.type>uber-jar</quarkus.package.type>
     <aws.package.name>${artifactId}-${version}-aws.jar</aws.package.name>
@@ -56,6 +56,12 @@
       <groupId>software.amazon.awssdk</groupId>
       <artifactId>url-connection-client</artifactId>
     </dependency>
+<!--    &lt;!&ndash; Following dependency is for SnapStart and can be removed if SnapStart is not used. &ndash;&gt;-->
+<!--    <dependency>-->
+<!--      <groupId>io.github.crac</groupId>-->
+<!--      <artifactId>org-crac</artifactId>-->
+<!--      <version>0.1.3</version>-->
+<!--    </dependency>-->
   </dependencies>
   <build>
     <plugins>
@@ -122,6 +128,9 @@
       <properties>
         <quarkus.package.type>native</quarkus.package.type>
         <quarkus.native.container-build>true</quarkus.native.container-build>
+        <quarkus.native.builder-image>
+          quay.io/quarkus/ubi-quarkus-graalvmce-builder-image:22.3.1-java11
+        </quarkus.native.builder-image>
         <quarkus.native.additional-build-args>
           --initialize-at-run-time=software.amazon.awssdk.services.dynamodb.DynamoDbRetryPolicy\,org.apache.http.impl.auth.NTLMEngineImpl
         </quarkus.native.additional-build-args>
