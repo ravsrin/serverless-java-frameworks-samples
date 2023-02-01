@@ -6,8 +6,7 @@ Description: >
 
 Globals:
   Function:
-    Tracing: Active
-    CodeUri: target/quarkus-lambda-function-1.0.0-SNAPSHOT-aws.jar
+    CodeUri: target/quarkus-lambda-function-1.0.0-SNAPSHOT.jar
     Handler: io.quarkus.amazon.lambda.runtime.QuarkusStreamHandler::handleRequest
     Runtime: java11
     Timeout: 30

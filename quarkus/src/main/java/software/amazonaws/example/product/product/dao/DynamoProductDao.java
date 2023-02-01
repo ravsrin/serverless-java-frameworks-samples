@@ -84,13 +84,17 @@ public class DynamoProductDao implements ProductDao {
       .build());
 
     logger.info("Scan returned: {} item(s)", scanResponse.count());
-
     List<Product> productList = new ArrayList<>();
-
     for (Map<String, AttributeValue> item : scanResponse.items()) {
       productList.add(ProductMapper.productFromDynamoDB(item));
     }
 
     return new Products(productList);
+  }
+
+  public void describeTable() {
+    dynamoDbClient.describeTable(DescribeTableRequest.builder()
+      .tableName(PRODUCT_TABLE_NAME)
+      .build());
   }
 }
