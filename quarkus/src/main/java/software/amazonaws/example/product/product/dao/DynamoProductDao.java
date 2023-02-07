@@ -4,16 +4,22 @@
 package software.amazonaws.example.product.product.dao;
 
 import com.amazonaws.xray.interceptors.TracingInterceptor;
-//import io.quarkus.arc.profile.IfBuildProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.core.SdkSystemSetting;
 import software.amazon.awssdk.core.client.config.ClientOverrideConfiguration;
 import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-import software.amazon.awssdk.services.dynamodb.model.*;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
+import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
+import software.amazon.awssdk.services.dynamodb.model.ScanResponse;
 import software.amazonaws.example.product.product.entity.Product;
 import software.amazonaws.example.product.product.entity.Products;
 
@@ -23,16 +29,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-//@IfBuildProfile("jvm")
 @ApplicationScoped
 public class DynamoProductDao implements ProductDao {
   private static final Logger logger = LoggerFactory.getLogger(DynamoProductDao.class);
   private static final String PRODUCT_TABLE_NAME = System.getenv("PRODUCT_TABLE_NAME");
   private static final DynamoDbClient dynamoDbClient;
-
   static {
     dynamoDbClient = DynamoDbClient.builder()
-      .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
+      .credentialsProvider(DefaultCredentialsProvider.create())
       .region(Region.of(System.getenv(SdkSystemSetting.AWS_REGION.environmentVariable())))
       .httpClient(UrlConnectionHttpClient.builder().build())
       .overrideConfiguration(ClientOverrideConfiguration.builder()
